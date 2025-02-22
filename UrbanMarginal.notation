@@ -51,7 +51,7 @@
       <layoutConstraint xmi:type="notation:Bounds" xmi:id="_kV6-We-xEe-zSbisarTEHw"/>
     </children>
     <element xmi:type="uml:Class" href="UrbanMarginal.uml#_kUXfIO-xEe-zSbisarTEHw"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_kVx0Ye-xEe-zSbisarTEHw" x="840" y="300" width="181" height="141"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_kVx0Ye-xEe-zSbisarTEHw" x="820" y="220" width="181" height="141"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_kV6-Wu-xEe-zSbisarTEHw" type="Class_Shape">
     <children xmi:type="notation:DecorationNode" xmi:id="_kV6-XO-xEe-zSbisarTEHw" type="Class_NameLabel"/>
@@ -403,7 +403,7 @@
       <layoutConstraint xmi:type="notation:Bounds" xmi:id="_kV8Mge-xEe-zSbisarTEHw"/>
     </children>
     <element xmi:type="uml:Class" href="UrbanMarginal.uml#_kUrBIe-xEe-zSbisarTEHw"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_kV7lh--xEe-zSbisarTEHw" x="1120" y="280" width="212" height="381"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_kV7lh--xEe-zSbisarTEHw" x="1300" y="180" width="212" height="381"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_kV8Mgu-xEe-zSbisarTEHw" type="Class_Shape">
     <children xmi:type="notation:DecorationNode" xmi:id="_kV8MhO-xEe-zSbisarTEHw" type="Class_NameLabel"/>
@@ -519,8 +519,8 @@
     <styles xmi:type="notation:FontStyle" xmi:id="_SGVL8e-yEe-zSbisarTEHw"/>
     <element xmi:type="uml:Association" href="UrbanMarginal.uml#_SGF7YO-yEe-zSbisarTEHw"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_SGVL8u-yEe-zSbisarTEHw" points="[721, 480, -643984, -643984]$[1120, 380, -643984, -643984]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_SG9eEO-yEe-zSbisarTEHw" id="(1.0,0.6965174129353234)"/>
-    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_SG9eEe-yEe-zSbisarTEHw" id="(0.0,0.5774278215223098)"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_SG9eEO-yEe-zSbisarTEHw" id="(1.0,0.6965174129353233)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_SG9eEe-yEe-zSbisarTEHw" id="(0.0,0.5774278215223096)"/>
   </edges>
   <edges xmi:type="notation:Connector" xmi:id="_teXUEO-yEe-zSbisarTEHw" type="Association_Edge" source="_kV7lcu-xEe-zSbisarTEHw" target="_kV8Mgu-xEe-zSbisarTEHw">
     <children xmi:type="notation:DecorationNode" xmi:id="_teX7IO-yEe-zSbisarTEHw" type="Association_StereotypeLabel">
