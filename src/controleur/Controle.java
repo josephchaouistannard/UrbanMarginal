@@ -26,12 +26,17 @@ public class Controle implements AsyncResponse {
     		this.frmArene.setVisible(true);
     		this.typeJeu = "serveur";
     		this.server = new ServeurSocket(this, port);
+    		this.frmEntreeJeu.dispose();
     	}
     	else {
     		this.typeJeu = "client";
     		this.client = new ClientSocket(this, info, port);
     	}
-    	this.frmEntreeJeu.dispose();
+    }
+    
+    public void evenementChoixJoueur(String pseudo, int numPerso) {
+    	this.frmChoixJoueur.dispose();
+    	this.frmArene.setVisible(true);
     }
 
     /**
@@ -47,9 +52,10 @@ public class Controle implements AsyncResponse {
 		switch (ordre) {
 			case "connexion":
 				if (this.typeJeu.equals("client")) {
-		    		this.frmChoixJoueur = new ChoixJoueur();
+		    		this.frmChoixJoueur = new ChoixJoueur(this);
 		    		this.frmChoixJoueur.setVisible(true);
 					this.frmArene = new Arene();
+					this.frmEntreeJeu.dispose();
 				}
 				break;
 			case "déconnexion":
