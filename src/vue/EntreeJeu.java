@@ -12,39 +12,34 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
 import javax.swing.JTextField;
+import controleur.Controle;
 
 public class EntreeJeu extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField txtIP;
-	private Arene frmArene;
-	private ChoixJoueur frmChoixJoueur;
+	private Controle controle;
 	
 	/*
 	 * Ouvrir nouvelle arene
 	 */
 	private void btnStart_Click() {
-		this.frmArene = new Arene();
-		this.frmArene.setVisible(true);
-		this.dispose();
+		this.controle.evenementEntreeJeu("serveur");
 	}
 	
 	/*
 	 * Ouvrir choix joueur
 	 */
 	private void btnConnect_Click() {
-		this.frmChoixJoueur = new ChoixJoueur();
-		this.frmChoixJoueur.setVisible(true);
-		this.dispose();
+		this.controle.evenementEntreeJeu(txtIP.getText());
 	}
-	
 
 
 	/**
 	 * Create the frame.
 	 */
-	public EntreeJeu() {
+	public EntreeJeu(Controle controle) {
 		setTitle("Urban Marginal");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 356, 213);
@@ -108,5 +103,7 @@ public class EntreeJeu extends JFrame {
 		btnExit.setFont(new Font("Tahoma", Font.BOLD, 14));
 		btnExit.setBounds(220, 129, 110, 35);
 		contentPane.add(btnExit);
+		
+		this.controle = controle;
 	}
 }
