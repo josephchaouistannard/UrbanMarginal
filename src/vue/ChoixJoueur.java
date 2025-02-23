@@ -1,93 +1,132 @@
 package vue;
 
-import java.awt.Cursor;
-import java.awt.Dimension;
-import controleur.Controle;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.SwingConstants;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.JTextField;
-import java.awt.Font;
+import java.net.URL;
 
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
+import controleur.Controle;
+
+import java.awt.Cursor;
+import java.awt.Dimension;
+
+/**
+ * Frame du choix du joueur
+ * @author emds
+ *
+ */
 public class ChoixJoueur extends JFrame {
 
-	private static final long serialVersionUID = 1L;
+	/**
+	 * Nombre de personnages différents
+	 */
+	private static final int NBPERSOS = 3;
+	/**
+	 * Panel général
+	 */
 	private JPanel contentPane;
+	/**
+	 * Zone de saisie du pseudo
+	 */
 	private JTextField txtPseudo;
+	/**
+	 * Label d'affichage du personnage
+	 */
 	private JLabel lblPersonnage;
-	private Arene frmArene;
+	/**
+	 * Instance du contrôleur pour communiquer avec lui
+	 */
 	private Controle controle;
-	private int num_perso;
-	private static int nbPersonnages = 3;
+	/**
+	 * Numéro du personnage sélectionné
+	 */
+	private int numPerso;
+
+	/**
+	 * Clic sur la flèche "précédent" pour afficher le personnage précédent
+	 */
+	private void lblPrecedent_clic() {
+		numPerso = ((numPerso+1)%NBPERSOS)+1;
+		affichePerso();
+	}
 	
-	private void btnFlecheGauche_Click() {
-		num_perso--;
-		if (num_perso < 1) {
-			num_perso = nbPersonnages;
-		}
+	/**
+	 * Clic sur la flèche "suivant" pour afficher le personnage suivant
+	 */
+	private void lblSuivant_clic() {
+		numPerso = (numPerso%NBPERSOS)+1 ;
 		affichePerso();
 	}
-	private void btnFlecheDroite_Click() {
-		num_perso++;
-		if (num_perso > nbPersonnages) {
-			num_perso = 1;
-		}
-		affichePerso();
-		
-	}
-	private void btnGo_Click() {
-		if (txtPseudo.getText().equals("")) {
+	
+	/**
+	 * Clic sur GO pour envoyer les informations
+	 */
+	private void lblGo_clic() {
+		if(this.txtPseudo.getText().equals("")) {
 			JOptionPane.showMessageDialog(null, "La saisie du pseudo est obligatoire");
-			txtPseudo.requestFocusInWindow();
-		}
-		else {
-			this.controle.evenementChoixJoueur(txtPseudo.getText(), num_perso);
+			this.txtPseudo.requestFocus();
+		} else {
+			this.controle.evenementChoixJoueur(this.txtPseudo.getText(), numPerso);
 		}
 	}
+	
+	/**
+	 * Affichage du personnage correspondant au numéro numPerso
+	 */
 	private void affichePerso() {
-		lblPersonnage.setIcon(new ImageIcon(ChoixJoueur.class.getResource("/personnages/perso"+Integer.toString(num_perso)+"marche1d1.gif")));
+		String chemin = "personnages/perso"+this.numPerso+"marche"+1+"d"+1+".gif";
+		URL resource = getClass().getClassLoader().getResource(chemin);
+		this.lblPersonnage.setIcon(new ImageIcon(resource));		
 	}
+
+	/**
+	 * Change le curseur de la souris en forme normale
+	 */
 	private void sourisNormale() {
 		contentPane.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
+	
+	/**
+	 * Change le curseur de la souris en forme de doigt pointé
+	 */
 	private void sourisDoigt() {
 		contentPane.setCursor(new Cursor(Cursor.HAND_CURSOR));
 	}
 
 	/**
 	 * Create the frame.
+	 * @param controle instance du contrôleur
 	 */
 	public ChoixJoueur(Controle controle) {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 415, 315);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		// Dimension de la frame en fonction de son contenu
 		this.getContentPane().setPreferredSize(new Dimension(400, 275));
-		this.pack();
+	    this.pack();
+	    // interdiction de changer la taille
 		this.setResizable(false);
-
+		 
+		setTitle("Choice");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		contentPane = new JPanel();
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+
+		lblPersonnage = new JLabel("");
+		lblPersonnage.setBounds(142, 115, 120, 120);
+		lblPersonnage.setHorizontalAlignment(SwingConstants.CENTER);
+		contentPane.add(lblPersonnage);
 		
-		this.lblPersonnage = new JLabel("");
-		this.lblPersonnage.setHorizontalAlignment(SwingConstants.CENTER);
-		this.lblPersonnage.setBounds(144, 114, 117, 123);
-		contentPane.add(this.lblPersonnage);
-		
-		JLabel lblFlecheGauche = new JLabel("");
-		lblFlecheGauche.addMouseListener(new MouseAdapter() {
+		JLabel lblPrecedent = new JLabel("");
+		lblPrecedent.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(MouseEvent e) {
-				btnFlecheGauche_Click();
+			public void mouseClicked(MouseEvent arg0) {
+				lblPrecedent_clic();
 			}
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -98,14 +137,12 @@ public class ChoixJoueur extends JFrame {
 				sourisNormale();
 			}
 		});
-		lblFlecheGauche.setBounds(59, 143, 46, 46);
-		contentPane.add(lblFlecheGauche);
 		
-		JLabel lblFlecheDroite = new JLabel("");
-		lblFlecheDroite.addMouseListener(new MouseAdapter() {
+		JLabel lblSuivant = new JLabel("");
+		lblSuivant.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				btnFlecheDroite_Click();
+				lblSuivant_clic();
 			}
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -116,45 +153,51 @@ public class ChoixJoueur extends JFrame {
 				sourisNormale();
 			}
 		});
-		lblFlecheDroite.setBounds(288, 143, 46, 46);
-		contentPane.add(lblFlecheDroite);
+		
+		JLabel lblGo = new JLabel("");
+		lblGo.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				lblGo_clic();
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				sourisDoigt();
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				sourisNormale();
+			}
+		});
 		
 		txtPseudo = new JTextField();
-		txtPseudo.setHorizontalAlignment(SwingConstants.CENTER);
-		txtPseudo.setFont(new Font("Tahoma", Font.BOLD, 10));
-		txtPseudo.setBounds(144, 245, 117, 20);
+		txtPseudo.setBounds(142, 245, 120, 20);
 		contentPane.add(txtPseudo);
 		txtPseudo.setColumns(10);
-		txtPseudo.setBorder(BorderFactory.createEmptyBorder());
 		
-		JLabel btnGo = new JLabel("");
-		btnGo.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				btnGo_Click();
-			}
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				sourisDoigt();
-			}
-			@Override
-			public void mouseExited(MouseEvent e) {
-				sourisNormale();
-			}
-		});
-		btnGo.setBounds(311, 200, 62, 65);
-		contentPane.add(btnGo);
+		lblGo.setBounds(311, 202, 65, 61);
+		contentPane.add(lblGo);
+		lblSuivant.setBounds(301, 145, 25, 46);
+		contentPane.add(lblSuivant);
+		lblPrecedent.setBounds(65, 146, 31, 45);
+		contentPane.add(lblPrecedent);
 		
-		JLabel lblNewLabel = new JLabel("");
-		lblNewLabel.setVerticalAlignment(SwingConstants.TOP);
-		lblNewLabel.setHorizontalAlignment(SwingConstants.LEFT);
-		lblNewLabel.setIcon(new ImageIcon(ChoixJoueur.class.getResource("/fonds/fondchoix.jpg")));
-		lblNewLabel.setBounds(0, 0, 400, 275);
-		contentPane.add(lblNewLabel);
+		JLabel lblFond = new JLabel("");
+		lblFond.setBounds(0, 0, 400, 275);
+		String chemin = "fonds/fondchoix.jpg";
+		URL resource = getClass().getClassLoader().getResource(chemin);
+		lblFond.setIcon(new ImageIcon(resource));		
+		contentPane.add(lblFond);
 		
+		// récupération de l'instance de Controle
 		this.controle = controle;
-		this.num_perso = 1;
-		affichePerso();
-	}
+		
+		// affichage du premier personnage
+		this.numPerso = 1;
+		this.affichePerso();
 
+		// positionnement sur la zone de saisie
+		txtPseudo.requestFocus();
+
+	}
 }

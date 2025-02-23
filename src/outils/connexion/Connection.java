@@ -80,13 +80,13 @@ public class Connection extends Thread {
 		// boucle tant qu'il faut écouter
 		while (inOk) {
 			try {
-				// réception d'un objet sur le canal d'entrée
+				// reception d'un objet sur le canal d'entrée
 				reception = in.readObject();
 				// envoi de l'information reçue vers la classe qui implémente AsyncResponse pour récupérer la réponse
 				delegate.reception(this, "reception", reception);
 			} catch (ClassNotFoundException e) {
 				// problème grave qui ne devrait pas se produire : arrêt du programme
-				System.out.println("erreur de classe sur réception : "+e);
+				System.out.println("erreur de classe sur reception : "+e);
 				System.exit(0);
 			} catch (IOException e) {
 				// envoi de l'information de déconnexion  vers la classe qui implémente AsyncResponse pour récupérer la réponse
