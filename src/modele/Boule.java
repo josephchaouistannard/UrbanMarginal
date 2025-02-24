@@ -67,6 +67,7 @@ public class Boule extends Objet implements Global, Runnable {
 	public void run() {
 		this.attaquant.setEtape(1);
 		super.jLabel.setVisible(true);
+		this.jeuServeur.envoi(FIGHT);
 		Joueur cible = null;
 		int lePas;
 		if (this.attaquant.getOrientation() == GAUCHE) {
@@ -88,11 +89,15 @@ public class Boule extends Objet implements Global, Runnable {
 		if (cible != null && !cible.estMort()) {
 			cible.perteVie();
 			attaquant.gainVie();
+			if (!cible.estMort()) {
+				this.jeuServeur.envoi(HURT);
+			}
 			for (int i = 1; i < 3; i++) {
 				cible.affiche(TOUCHE, i);
 				pause(80, 0);
 			}
 			if (cible.estMort()) {
+				this.jeuServeur.envoi(DEATH);
 				for (int i = 1; i < 3; i++) {
 					cible.affiche(MORT, i);
 					pause(80, 0);

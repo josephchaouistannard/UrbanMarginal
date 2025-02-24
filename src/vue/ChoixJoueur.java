@@ -13,6 +13,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import controleur.Controle;
+import outils.son.Son;
 
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -48,11 +49,32 @@ public class ChoixJoueur extends JFrame {
 	 * Numéro du personnage sélectionné
 	 */
 	private int numPerso;
+	
+	/**
+	 * Son de bienvenue
+	 */
+	private Son welcome;
+	
+	/**
+	 * Son de personnage precedent
+	 */
+	private Son precedent;
+	
+	/**
+	 * Son de personnage suivant
+	 */
+	private Son suivant;
+	
+	/**
+	 * Son de debut de jeu
+	 */
+	private Son go;
 
 	/**
 	 * Clic sur la flèche "précédent" pour afficher le personnage précédent
 	 */
 	private void lblPrecedent_clic() {
+		precedent.play();
 		numPerso = ((numPerso+1)%NBPERSOS)+1;
 		affichePerso();
 	}
@@ -61,6 +83,7 @@ public class ChoixJoueur extends JFrame {
 	 * Clic sur la flèche "suivant" pour afficher le personnage suivant
 	 */
 	private void lblSuivant_clic() {
+		suivant.play();
 		numPerso = (numPerso%NBPERSOS)+1 ;
 		affichePerso();
 	}
@@ -69,6 +92,7 @@ public class ChoixJoueur extends JFrame {
 	 * Clic sur GO pour envoyer les informations
 	 */
 	private void lblGo_clic() {
+		go.play();
 		if(this.txtPseudo.getText().equals("")) {
 			JOptionPane.showMessageDialog(null, "La saisie du pseudo est obligatoire");
 			this.txtPseudo.requestFocus();
@@ -199,6 +223,12 @@ public class ChoixJoueur extends JFrame {
 
 		// positionnement sur la zone de saisie
 		txtPseudo.requestFocus();
+		
+		this.welcome = new Son(getClass().getClassLoader().getResource("sons/welcome.wav"));
+		this.precedent = new Son(getClass().getClassLoader().getResource("sons/precedent.wav"));
+		this.suivant = new Son(getClass().getClassLoader().getResource("sons/suivant.wav"));
+		this.go = new Son(getClass().getClassLoader().getResource("sons/go.wav"));
+		this.welcome.play();
 
 	}
 }

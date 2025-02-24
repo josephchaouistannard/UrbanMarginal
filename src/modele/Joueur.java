@@ -170,6 +170,7 @@ public class Joueur extends Objet implements Global {
 			case KeyEvent.VK_SPACE:
 				if (!this.boule.getjLabel().isVisible()) {
 					this.boule.tireBoule(this, lesMurs);
+					
 				}
 				break;
 			}

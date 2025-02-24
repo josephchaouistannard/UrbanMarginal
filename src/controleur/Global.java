@@ -3,6 +3,8 @@
  */
 package controleur;
 
+import java.util.ArrayList;
+
 /**
  * Global contient les constantes du programme
  * @author emds
@@ -202,5 +204,15 @@ public interface Global {
 	 * Largeur boule
 	 */
 	int LARGEURBOULE = 17;
-
+	
+	String FIGHTSON = "sons/fight.wav";
+	String HURTSON = "sons/hurt.wav";
+	String DEATHSON = "sons/death.wav";
+	String AMBIANCESON = "sons/ambiance.wav";
+	String[] SONS = {FIGHTSON, HURTSON, DEATHSON, AMBIANCESON};
+	int FIGHT = 0;
+	int HURT = 1;
+	int DEATH = 2;
+	int AMBIANCE = 3;
+	String JOUERSON = "jouerson";
 }

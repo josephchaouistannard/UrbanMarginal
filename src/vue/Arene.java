@@ -11,6 +11,8 @@ import javax.swing.JTextField;
 
 import controleur.Controle;
 import controleur.Global;
+import outils.son.Son;
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.net.URL;
@@ -50,6 +52,10 @@ public class Arene extends JFrame implements Global {
 	 * Permet de savoir si c'est une arène client ou serveur
 	 */
 	private Boolean client;
+	/**
+	 * Propriété pour stocké les differents sons
+	 */
+	private Son[] sons = new Son[SONS.length];
 	
 	/**
 	 * Getter sur le JPanel contenant les murs
@@ -169,6 +175,22 @@ public class Arene extends JFrame implements Global {
 		}
 		this.contentPane.requestFocusInWindow();
 	}
+	/**
+	 * Joue le son dans l'index son de propriété sons
+	 * @param son
+	 */
+	public void joueSon(int son) {
+		sons[son].play();
+	}
+	
+	public void joueSonContinue(int son) {
+		try {
+			sons[son].playContinue();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			System.out.println("Son pas trouvé");
+		}
+	}
 	
 	/**
 	 * Create the frame.
@@ -220,6 +242,11 @@ public class Arene extends JFrame implements Global {
 			txtSaisie.setBounds(0, 600, 800, 25);
 			contentPane.add(txtSaisie);
 			txtSaisie.setColumns(10);
+			
+			for (int i = 0; i < SONS.length; i++) {
+				this.sons[i] = new Son(getClass().getClassLoader().getResource(SONS[i]));
+			}
+			joueSonContinue(AMBIANCE);
 		}
 		
 		JScrollPane jspChat = new JScrollPane();
@@ -245,8 +272,7 @@ public class Arene extends JFrame implements Global {
 		contentPane.add(lblFond);
 		
 		// récupération de l'instance de Controle
-		this.controle = controle;
-		
+		this.controle = controle;		
 	}
 
 }

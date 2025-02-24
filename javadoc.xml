@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="javadoc">
     <target name="javadoc">
-        <javadoc access="private" author="true" classpath="." destdir="doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="controleur,vue,outils.connexion,modele" source="21" sourcepath="src;media" splitindex="true" use="true" version="true"/>
+        <javadoc access="private" author="true" classpath="." destdir="doc" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="controleur,vue,outils.son.exceptions,outils.connexion,modele,outils.son.ecouteurs,outils.son" source="21" sourcepath="src;media" splitindex="true" use="true" version="true"/>
     </target>
 </project>
