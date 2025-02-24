@@ -1,5 +1,7 @@
 package modele;
 
+import java.util.Collection;
+
 import javax.swing.JLabel;
 
 /**
@@ -46,4 +48,35 @@ public abstract class Objet {
 		}
 	}
 	
+	/**
+	 * Contrôle si le joueur touche un des objets dans une collection
+	 * @param lesJoueurs collection contenant tous les joueurs
+	 * @return true si l'objet touche une autre
+	 */
+	public Boolean toucheCollectionObjets(Collection<Objet> lesObjets) {
+		for(Objet objet : lesObjets) {
+			if(!this.equals(objet)) {
+				if(this.toucheObjet(objet)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * Contrôle si le joueur touche un des objets dans une collection
+	 * @param lesJoueurs collection contenant tous les joueurs
+	 * @return true si l'objet touche une autre
+	 */
+	public Objet getObjetTouche(Collection<Objet> lesObjets) {
+		for(Objet objet : lesObjets) {
+			if(!this.equals(objet)) {
+				if(this.toucheObjet(objet)) {
+					return objet;
+				}
+			}
+		}
+		return null;
+	}
 }

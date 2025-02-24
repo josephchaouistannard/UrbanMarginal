@@ -58,7 +58,7 @@ public class Joueur extends Objet implements Global {
 	public Joueur(JeuServeur jeuServeur) {
 		this.jeuServeur = jeuServeur;
 		this.vie = MAXVIE;
-		this.etape = 1;
+		this.setEtape(1);
 		this.orientation = DROITE;
 	}
 
@@ -80,6 +80,7 @@ public class Joueur extends Objet implements Global {
 	public void initPerso(String pseudo, int numPerso, Collection<Joueur>lesJoueurs, ArrayList<Mur> lesMurs) {
 		this.pseudo = pseudo;
 		this.numPerso = numPerso;
+		this.boule = new Boule(jeuServeur);
 		System.out.println("joueur "+pseudo+" - num perso "+numPerso+" créé");
 		// création du label du personnage
 		super.jLabel = new JLabel();
@@ -92,8 +93,10 @@ public class Joueur extends Objet implements Global {
 		// demande d'ajout du label du personnage et du message dans l'arène du serveur
 		this.jeuServeur.ajoutJLabelJeuArene(jLabel);
 		this.jeuServeur.ajoutJLabelJeuArene(message);
+		this.jeuServeur.ajoutJLabelJeuArene(boule.getjLabel());
 		// demande d'affichage du personnage
-		this.affiche(MARCHE, this.etape);
+		this.affiche(MARCHE, this.getEtape());
+		
 	}
 
 	/**
@@ -102,11 +105,14 @@ public class Joueur extends Objet implements Global {
 	 * @param lesMurs collection contenant les murs
 	 */
 	private void premierePosition(Collection<Joueur> lesJoueurs, ArrayList<Mur> lesMurs) {
+		ArrayList<Objet> combinedCollection = new ArrayList<Objet>();
+		combinedCollection.addAll(lesJoueurs);
+		combinedCollection.addAll(lesMurs);
 		jLabel.setBounds(0, 0, LARGEURPERSO, HAUTEURPERSO);
 		do {
 			posX = (int) Math.round(Math.random() * (LARGEURARENE - LARGEURPERSO)) ;
 			posY = (int) Math.round(Math.random() * (HAUTEURARENE - HAUTEURPERSO - HAUTEURMESSAGE)) ;
-		}while(this.toucheJoueur(lesJoueurs) || this.toucheMur(lesMurs));
+		}while(this.toucheCollectionObjets(combinedCollection));
 	}
 	
 	/**
@@ -117,7 +123,7 @@ public class Joueur extends Objet implements Global {
 	public void affiche(String etat, int etape) {
 		// positionnement du personnage et affectation de la bonne image
 		super.jLabel.setBounds(posX, posY, LARGEURPERSO, HAUTEURPERSO);
-		String chemin = CHEMINPERSONNAGES+PERSO+this.numPerso+etat+etape+"d"+this.orientation+EXTFICHIERPERSO;
+		String chemin = CHEMINPERSONNAGES+PERSO+this.numPerso+etat+etape+"d"+this.getOrientation()+EXTFICHIERPERSO;
 		URL resource = getClass().getClassLoader().getResource(chemin);
 		super.jLabel.setIcon(new ImageIcon(resource));
 		// positionnement et remplissage du message sous le perosnnage
@@ -134,91 +140,80 @@ public class Joueur extends Objet implements Global {
 	 * @param i 
 	 */
 	public void action(int i, Collection<Joueur> lesJoueurs, ArrayList<Mur> lesMurs) {
-		switch (i) {
-		case KeyEvent.VK_LEFT:
-			if (this.posX - PAS > 0) {
-				this.orientation = GAUCHE;
-				this.deplace(this.posX - PAS, this.posY, lesJoueurs, lesMurs);
+		if (!this.estMort()) {
+			ArrayList<Objet> combinedCollection = new ArrayList<Objet>();
+			combinedCollection.addAll(lesJoueurs);
+			combinedCollection.addAll(lesMurs);
+			switch (i) {
+			case KeyEvent.VK_LEFT:
+				if (this.posX - PAS > 0) {
+					this.orientation = GAUCHE;
+					this.deplace(this.posX - PAS, this.posY, combinedCollection);
+				}
+				break;
+			case KeyEvent.VK_RIGHT:
+				if (this.posX + PAS < 800 - LARGEURPERSO) {
+					this.orientation = DROITE;
+					this.deplace(this.posX + PAS, this.posY, combinedCollection);
+				}
+				break;
+			case KeyEvent.VK_UP:
+				if (this.posY - PAS > 0) {
+					this.deplace(this.posX, this.posY - PAS, combinedCollection);
+				}
+				break;
+			case KeyEvent.VK_DOWN:
+				if (this.posY + PAS < 600 - HAUTEURPERSO) {
+					this.deplace(this.posX, this.posY + PAS, combinedCollection);
+				}
+				break;
+			case KeyEvent.VK_SPACE:
+				if (!this.boule.getjLabel().isVisible()) {
+					this.boule.tireBoule(this, lesMurs);
+				}
+				break;
 			}
-			break;
-		case KeyEvent.VK_RIGHT:
-			if (this.posX + PAS < 800 - LARGEURPERSO) {
-				this.orientation = DROITE;
-				this.deplace(this.posX + PAS, this.posY, lesJoueurs, lesMurs);
-			}
-			break;
-		case KeyEvent.VK_UP:
-			if (this.posY - PAS > 0) {
-				this.deplace(this.posX, this.posY - PAS, lesJoueurs, lesMurs);
-			}
-			break;
-		case KeyEvent.VK_DOWN:
-			if (this.posY + PAS < 600 - HAUTEURPERSO) {
-				this.deplace(this.posX, this.posY + PAS, lesJoueurs, lesMurs);
-			}
-			break;
-		}
-		this.affiche(MARCHE, this.etape);
-		this.etape++;
-		if (this.etape > 4) {
-			this.etape = 1;
+			this.affiche(MARCHE, this.getEtape());
+			this.setEtape(this.getEtape() + 1);
+			if (this.getEtape() > 4) {
+				this.setEtape(1);
+			} 
 		}
 	}
 
 	/**
 	 * Gère le déplacement du personnage
 	 */
-	private void deplace(int newPosX, int newPosY, Collection<Joueur> lesJoueurs, ArrayList<Mur> lesMurs) { 
+	private void deplace(int newPosX, int newPosY, Collection<Objet> lesObjets) { 
 		int oldPosX = this.posX;
 		int oldPosY = this.posY;
 		this.posX = newPosX;
 		this.posY = newPosY;
-		if (this.toucheMur(lesMurs) || this.toucheJoueur(lesJoueurs)) {
+		if (this.toucheCollectionObjets(lesObjets))
+		{
 			this.posX = oldPosX;
 			this.posY = oldPosY;
 		}
-	}
-
-	/**
-	 * Contrôle si le joueur touche un des autres joueurs
-	 * @param lesJoueurs collection contenant tous les joueurs
-	 * @return true si le joueur touche un autre joueur
-	 */
-	private Boolean toucheJoueur(Collection<Joueur> lesJoueurs) {
-		for(Joueur unJoueur : lesJoueurs) {
-			if(!this.equals(unJoueur)) {
-				if(super.toucheObjet(unJoueur)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	/**
-	* Contrôle si le joueur touche un des murs
-	 * @param lesMurs collection contenant tous les murs
-	 * @return true si le joueur touche un mur
-	 */
-	private Boolean toucheMur(ArrayList<Mur> lesMurs) {
-		for(Mur unMur : lesMurs) {
-			if(super.toucheObjet(unMur)) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	/**
 	 * Gain de points de vie après avoir touché un joueur
 	 */
 	public void gainVie() {
+		this.vie += GAIN;
+		if (this.vie > MAXVIE) {
+			this.vie = MAXVIE;
+		}
 	}
 	
 	/**
 	 * Perte de points de vie après avoir été touché 
 	 */
 	public void perteVie() {
+		this.vie -= PERTE;
+		if (this.vie < 0) {
+			this.vie = 0;
+		}
 	}
 	
 	/**
@@ -226,13 +221,25 @@ public class Joueur extends Objet implements Global {
 	 * @return true si vie = 0
 	 */
 	public Boolean estMort() {
-		return null;
+		return (this.vie == 0);
 	}
 	
 	/**
 	 * Le joueur se déconnecte et disparait
 	 */
 	public void departJoueur() {
+	}
+
+	public int getOrientation() {
+		return orientation;
+	}
+
+	public int getEtape() {
+		return etape;
+	}
+
+	public void setEtape(int etape) {
+		this.etape = etape;
 	}
 	
 }

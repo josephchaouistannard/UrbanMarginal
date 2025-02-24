@@ -25,6 +25,17 @@ public class JeuServeur extends Jeu implements Global {
 	private Hashtable<Connection, Joueur> lesJoueurs = new Hashtable<Connection, Joueur>() ;
 	
 	/**
+	 * getter qui retourne une ArrayList avec tous les murs et joueurs
+	 * @return ArrayList avec tous les murs et joueurs
+	 */
+	public ArrayList<Objet> getMursEtJoueurs() {
+		ArrayList<Objet> combinedCollection = new ArrayList<Objet>();
+		combinedCollection.addAll(lesJoueurs.values());
+		combinedCollection.addAll(lesMurs);
+		return combinedCollection;
+	}
+	
+	/**
 	 * Constructeur
 	 * @param controle instance du contrôleur pour les échanges
 	 */

@@ -194,5 +194,13 @@ public interface Global {
 	 * ordre pour modifier le contenu du tchat dans l'arène du client
 	 */
 	String MODIFTCHAT = "modif tchat";
+	/**
+	 * Hauteur boule
+	 */
+	int HAUTEURBOULE = 17;
+	/**
+	 * Largeur boule
+	 */
+	int LARGEURBOULE = 17;
 
 }

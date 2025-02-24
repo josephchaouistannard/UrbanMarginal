@@ -163,6 +163,9 @@ public class Arene extends JFrame implements Global {
 		case KeyEvent.VK_DOWN:
 			this.controle.evenementArene(e.getKeyCode());
 			break;
+		case KeyEvent.VK_SPACE:
+			this.controle.evenementArene(e.getKeyCode());
+			break;
 		}
 		this.contentPane.requestFocusInWindow();
 	}
