@@ -3,6 +3,8 @@ package modele;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import javax.swing.JLabel;
+
 import controleur.Controle;
 import controleur.Global;
 import outils.connexion.Connection;
@@ -32,7 +34,7 @@ public class JeuServeur extends Jeu implements Global {
 	
 	@Override
 	public void connexion(Connection connection) {
-		this.lesJoueurs.put(connection, new Joueur());
+		this.lesJoueurs.put(connection, new Joueur(this));
 	}
 
 	@Override
@@ -45,7 +47,14 @@ public class JeuServeur extends Jeu implements Global {
 			controle.evenementJeuServeur(AJOUTPANELMURS, connection);
 			String pseudo = infos[1];
 			int numPerso = Integer.parseInt(infos[2]);
-			this.lesJoueurs.get(connection).initPerso(pseudo, numPerso);
+			this.lesJoueurs.get(connection).initPerso(pseudo, numPerso, this.lesJoueurs.values(), this.lesMurs);
+			String premierMessage = "*** "+pseudo+" vient de se connecter ***";
+			this.controle.evenementJeuServeur(AJOUTPHRASE, premierMessage);
+			break;
+		case TCHAT :
+			String phrase = infos[1];
+			phrase = this.lesJoueurs.get(connection).getPseudo()+" > "+phrase;
+			this.controle.evenementJeuServeur(AJOUTPHRASE, phrase);
 			break;
 		}
 	}
@@ -54,13 +63,30 @@ public class JeuServeur extends Jeu implements Global {
 	public void deconnexion() {
 	}
 
+	public void ajoutJLabelJeuArene(JLabel jLabel) {
+		this.controle.evenementJeuServeur(AJOUTJLABELJEU, jLabel);
+	}
+	
 	/**
 	 * Envoi d'une information vers tous les clients
 	 * fais appel plusieurs fois à l'envoi de la classe Jeu
+	 * @param info information à envoyer
 	 */
-	public void envoi() {
+	public void envoi(Object info) {
+		for(Connection connection : this.lesJoueurs.keySet()) {
+			super.envoi(connection, info);
+		}		
 	}
 
+	/**
+	 * Envoi du panel de jeu à tous les joueurs
+	 */
+	public void envoiJeuATous() {
+		for(Connection connection : this.lesJoueurs.keySet()) {
+			this.controle.evenementJeuServeur(MODIFPANELJEU, connection);
+		}
+	}
+	
 	/**
 	 * Génération des murs
 	 */
