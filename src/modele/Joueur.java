@@ -1,6 +1,7 @@
 package modele;
 
 import java.awt.Font;
+import java.awt.event.KeyEvent;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -128,14 +129,54 @@ public class Joueur extends Objet implements Global {
 
 	/**
 	 * Gère une action reçue et qu'il faut afficher (déplacement, tire de boule...)
+	 * @param lesMurs 
+	 * @param collection 
+	 * @param i 
 	 */
-	public void action() {
+	public void action(int i, Collection<Joueur> lesJoueurs, ArrayList<Mur> lesMurs) {
+		switch (i) {
+		case KeyEvent.VK_LEFT:
+			if (this.posX - PAS > 0) {
+				this.orientation = GAUCHE;
+				this.deplace(this.posX - PAS, this.posY, lesJoueurs, lesMurs);
+			}
+			break;
+		case KeyEvent.VK_RIGHT:
+			if (this.posX + PAS < 800 - LARGEURPERSO) {
+				this.orientation = DROITE;
+				this.deplace(this.posX + PAS, this.posY, lesJoueurs, lesMurs);
+			}
+			break;
+		case KeyEvent.VK_UP:
+			if (this.posY - PAS > 0) {
+				this.deplace(this.posX, this.posY - PAS, lesJoueurs, lesMurs);
+			}
+			break;
+		case KeyEvent.VK_DOWN:
+			if (this.posY + PAS < 600 - HAUTEURPERSO) {
+				this.deplace(this.posX, this.posY + PAS, lesJoueurs, lesMurs);
+			}
+			break;
+		}
+		this.affiche(MARCHE, this.etape);
+		this.etape++;
+		if (this.etape > 4) {
+			this.etape = 1;
+		}
 	}
 
 	/**
 	 * Gère le déplacement du personnage
 	 */
-	private void deplace() { 
+	private void deplace(int newPosX, int newPosY, Collection<Joueur> lesJoueurs, ArrayList<Mur> lesMurs) { 
+		int oldPosX = this.posX;
+		int oldPosY = this.posY;
+		this.posX = newPosX;
+		this.posY = newPosY;
+		if (this.toucheMur(lesMurs) || this.toucheJoueur(lesJoueurs)) {
+			this.posX = oldPosX;
+			this.posY = oldPosY;
+		}
 	}
 
 	/**

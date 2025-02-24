@@ -99,6 +99,10 @@ public interface Global {
 	 */
 	String PSEUDO = "pseudo";
 	/**
+	 * Message "action" envoyé pour l'action d'un joueur
+	 */
+	String ACTION = "action";
+	/**
 	 * vie de départ pour tous les joueurs
 	 */
 	int MAXVIE = 10 ;
@@ -150,6 +154,10 @@ public interface Global {
 	 * orientation du personnage vers la droite
 	 */
 	int DROITE = 1;
+	/**
+	 * pixels de deplacement par pas
+	 */
+	int PAS = 10;
 	/**
 	 * Message "serveur" pour la création d'un serveur
 	 */

@@ -171,6 +171,7 @@ public class ChoixJoueur extends JFrame {
 		});
 		
 		txtPseudo = new JTextField();
+		txtPseudo.setText("testname");
 		txtPseudo.setBounds(142, 245, 120, 20);
 		contentPane.add(txtPseudo);
 		txtPseudo.setColumns(10);

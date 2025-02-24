@@ -56,6 +56,8 @@ public class JeuServeur extends Jeu implements Global {
 			phrase = this.lesJoueurs.get(connection).getPseudo()+" > "+phrase;
 			this.controle.evenementJeuServeur(AJOUTPHRASE, phrase);
 			break;
+		case ACTION:
+			this.lesJoueurs.get(connection).action(Integer.parseInt(infos[1]), lesJoueurs.values(), lesMurs);
 		}
 	}
 	
