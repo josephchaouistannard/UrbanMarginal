@@ -16,6 +16,10 @@ public class JeuClient extends Jeu implements Global {
 	 * objet de connexion pour communiquer avec le serveur
 	 */
 	private Connection connection;
+	
+	/**
+	 * Propriété pour controler si les murs ont déjà était crées
+	 */
 	private Boolean mursOk = false;
 	
 	/**

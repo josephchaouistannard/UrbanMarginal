@@ -23,6 +23,7 @@ public abstract class Objet {
 	protected JLabel jLabel;
 	
 	/**
+	 * Getter pour le jlabel d'un objet de type Objet
 	 * @return the jLabel
 	 */
 	public JLabel getjLabel() {

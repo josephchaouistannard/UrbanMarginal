@@ -52,6 +52,7 @@ public class Arene extends JFrame implements Global {
 	private Boolean client;
 	
 	/**
+	 * Getter sur le JPanel contenant les murs
 	 * @return the jpnMurs
 	 */
 	public JPanel getJpnMurs() {
@@ -59,6 +60,7 @@ public class Arene extends JFrame implements Global {
 	}
 
 	/**
+	 * Setter pour ajouter un mur au panel jpnMurs et le refraichir
 	 * @param jpnMurs the jpnMurs to set
 	 */
 	public void setJpnMurs(JPanel jpnMurs) {
@@ -67,6 +69,7 @@ public class Arene extends JFrame implements Global {
 	}
 
 	/**
+	 * Getter pour le panel contenant les joueurs
 	 * @return the jpnJeu
 	 */
 	public JPanel getJpnJeu() {
@@ -74,6 +77,7 @@ public class Arene extends JFrame implements Global {
 	}
 
 	/**
+	 * Setter qui vide, rempli et refraichit le panel de jeu
 	 * @param jpnJeu the jpnJeu to set
 	 */
 	public void setJpnJeu(JPanel jpnJeu) {
@@ -83,6 +87,7 @@ public class Arene extends JFrame implements Global {
 	}
 
 	/**
+	 * Getter qui retourne seulement le contenu du txtChat
 	 * @return the txtChat
 	 */
 	public String getTxtChat() {

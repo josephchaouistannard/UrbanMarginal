@@ -62,7 +62,11 @@ public class JeuServeur extends Jeu implements Global {
 	@Override
 	public void deconnexion() {
 	}
-
+	
+/**
+ * Methode pour envoyer un jlabel au panel de jeu
+ * @param jLabel
+ */
 	public void ajoutJLabelJeuArene(JLabel jLabel) {
 		this.controle.evenementJeuServeur(AJOUTJLABELJEU, jLabel);
 	}

@@ -62,6 +62,7 @@ public class Joueur extends Objet implements Global {
 	}
 
 	/**
+	 * Get pseudo d'une instance de Joueur
 	 * @return the pseudo
 	 */
 	public String getPseudo() {
