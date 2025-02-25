@@ -3,7 +3,6 @@ package modele;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.swing.ImageIcon;
@@ -58,16 +57,22 @@ public class Joueur extends Objet implements Global {
 	public Joueur(JeuServeur jeuServeur) {
 		this.jeuServeur = jeuServeur;
 		this.vie = MAXVIE;
-		this.setEtape(1);
+		this.etape = 1;
 		this.orientation = DROITE;
 	}
 
 	/**
-	 * Get pseudo d'une instance de Joueur
 	 * @return the pseudo
 	 */
 	public String getPseudo() {
 		return pseudo;
+	}
+
+	/**
+	 * @return the orientation
+	 */
+	public int getOrientation() {
+		return orientation;
 	}
 
 	/**
@@ -77,10 +82,9 @@ public class Joueur extends Objet implements Global {
 	 * @param lesJoueurs collection contenant tous les joueurs
 	 * @param lesMurs collection contenant les murs
 	 */
-	public void initPerso(String pseudo, int numPerso, Collection<Joueur>lesJoueurs, ArrayList<Mur> lesMurs) {
+	public void initPerso(String pseudo, int numPerso, Collection lesJoueurs, Collection lesMurs) {
 		this.pseudo = pseudo;
 		this.numPerso = numPerso;
-		this.boule = new Boule(jeuServeur);
 		System.out.println("joueur "+pseudo+" - num perso "+numPerso+" créé");
 		// création du label du personnage
 		super.jLabel = new JLabel();
@@ -88,15 +92,16 @@ public class Joueur extends Objet implements Global {
 		this.message = new JLabel();
 		message.setHorizontalAlignment(SwingConstants.CENTER);
 		message.setFont(new Font("Dialog", Font.PLAIN, 8));
+		// création de la boule
+		this.boule = new Boule(this.jeuServeur);
 		// calcul de la première position du personnage
 		this.premierePosition(lesJoueurs, lesMurs);
-		// demande d'ajout du label du personnage et du message dans l'arène du serveur
+		// demande d'ajout du label du personnage, du message et de la boule dans l'arène du serveur
 		this.jeuServeur.ajoutJLabelJeuArene(jLabel);
 		this.jeuServeur.ajoutJLabelJeuArene(message);
 		this.jeuServeur.ajoutJLabelJeuArene(boule.getjLabel());
 		// demande d'affichage du personnage
-		this.affiche(MARCHE, this.getEtape());
-		
+		this.affiche(MARCHE, this.etape);
 	}
 
 	/**
@@ -104,15 +109,12 @@ public class Joueur extends Objet implements Global {
 	 * @param lesJoueurs collection contenant tous les joueurs
 	 * @param lesMurs collection contenant les murs
 	 */
-	private void premierePosition(Collection<Joueur> lesJoueurs, ArrayList<Mur> lesMurs) {
-		ArrayList<Objet> combinedCollection = new ArrayList<Objet>();
-		combinedCollection.addAll(lesJoueurs);
-		combinedCollection.addAll(lesMurs);
+	private void premierePosition(Collection lesJoueurs, Collection lesMurs) {
 		jLabel.setBounds(0, 0, LARGEURPERSO, HAUTEURPERSO);
 		do {
 			posX = (int) Math.round(Math.random() * (LARGEURARENE - LARGEURPERSO)) ;
 			posY = (int) Math.round(Math.random() * (HAUTEURARENE - HAUTEURPERSO - HAUTEURMESSAGE)) ;
-		}while(this.toucheCollectionObjets(combinedCollection));
+		}while(toucheCollectionObjets(lesJoueurs)!=null || toucheCollectionObjets(lesMurs)!=null);
 	}
 	
 	/**
@@ -123,7 +125,7 @@ public class Joueur extends Objet implements Global {
 	public void affiche(String etat, int etape) {
 		// positionnement du personnage et affectation de la bonne image
 		super.jLabel.setBounds(posX, posY, LARGEURPERSO, HAUTEURPERSO);
-		String chemin = CHEMINPERSONNAGES+PERSO+this.numPerso+etat+etape+"d"+this.getOrientation()+EXTFICHIERPERSO;
+		String chemin = CHEMINPERSONNAGES+PERSO+this.numPerso+etat+etape+"d"+this.orientation+EXTFICHIERPERSO;
 		URL resource = getClass().getClassLoader().getResource(chemin);
 		super.jLabel.setIcon(new ImageIcon(resource));
 		// positionnement et remplissage du message sous le perosnnage
@@ -135,86 +137,85 @@ public class Joueur extends Objet implements Global {
 
 	/**
 	 * Gère une action reçue et qu'il faut afficher (déplacement, tire de boule...)
-	 * @param lesMurs 
-	 * @param collection 
-	 * @param i 
+	 * @param action action a exécutée (déplacement ou tir de boule)
+	 * @param lesMurs collection de murs
+	 * @param lesJoueurs collection de joueurs
 	 */
-	public void action(int i, Collection<Joueur> lesJoueurs, ArrayList<Mur> lesMurs) {
-		if (!this.estMort()) {
-			ArrayList<Objet> combinedCollection = new ArrayList<Objet>();
-			combinedCollection.addAll(lesJoueurs);
-			combinedCollection.addAll(lesMurs);
-			switch (i) {
-			case KeyEvent.VK_LEFT:
-				if (this.posX - PAS > 0) {
-					this.orientation = GAUCHE;
-					this.deplace(this.posX - PAS, this.posY, combinedCollection);
-				}
+	public void action(Integer action, Collection lesJoueurs, Collection lesMurs) {
+		if(!this.estMort()) {
+			switch(action){
+			case KeyEvent.VK_LEFT :
+				orientation = GAUCHE; 
+				posX = deplace(posX, action, -PAS, LARGEURARENE - LARGEURPERSO, lesJoueurs, lesMurs);
 				break;
-			case KeyEvent.VK_RIGHT:
-				if (this.posX + PAS < 800 - LARGEURPERSO) {
-					this.orientation = DROITE;
-					this.deplace(this.posX + PAS, this.posY, combinedCollection);
-				}
+			case KeyEvent.VK_RIGHT :
+				orientation = DROITE; 
+				posX = deplace(posX, action, PAS, LARGEURARENE - LARGEURPERSO, lesJoueurs, lesMurs);
 				break;
-			case KeyEvent.VK_UP:
-				if (this.posY - PAS > 0) {
-					this.deplace(this.posX, this.posY - PAS, combinedCollection);
-				}
+			case KeyEvent.VK_UP :
+				posY = deplace(posY, action, -PAS, HAUTEURARENE - HAUTEURPERSO - HAUTEURMESSAGE, lesJoueurs, lesMurs) ;
 				break;
-			case KeyEvent.VK_DOWN:
-				if (this.posY + PAS < 600 - HAUTEURPERSO) {
-					this.deplace(this.posX, this.posY + PAS, combinedCollection);
-				}
-				break;
-			case KeyEvent.VK_SPACE:
-				if (!this.boule.getjLabel().isVisible()) {
+			case KeyEvent.VK_DOWN :
+				posY = deplace(posY,  action, PAS, HAUTEURARENE - HAUTEURPERSO - HAUTEURMESSAGE, lesJoueurs, lesMurs) ;
+				break;	
+			case KeyEvent.VK_SPACE :
+				if(!this.boule.getjLabel().isVisible()) {
 					this.boule.tireBoule(this, lesMurs);
-					
 				}
 				break;
 			}
-			this.affiche(MARCHE, this.getEtape());
-			this.setEtape(this.getEtape() + 1);
-			if (this.getEtape() > 4) {
-				this.setEtape(1);
-			} 
+			this.affiche(MARCHE, this.etape);
 		}
 	}
 
 	/**
-	 * Gère le déplacement du personnage
+	 * Gère le déplacement du personnage 
+	 * @param position position de départ
+	 * @param action gauche, droite, haut ou bas
+	 * @param lepas valeur de déplacement (positif ou négatif)
+	 * @param max valeur à ne pas dépasser
+	 * @param lesJoueurs collection de joueurs pour éviter les collisions
+	 * @param lesMurs collection de murs pour éviter les collisions
+	 * @return nouvelle position
 	 */
-	private void deplace(int newPosX, int newPosY, Collection<Objet> lesObjets) { 
-		int oldPosX = this.posX;
-		int oldPosY = this.posY;
-		this.posX = newPosX;
-		this.posY = newPosY;
-		if (this.toucheCollectionObjets(lesObjets))
-		{
-			this.posX = oldPosX;
-			this.posY = oldPosY;
+	private int deplace(int position, // position de départ
+			int action, // gauche, droite, haut, bas
+			int lepas, // valeur du déplacement (positif ou négatif)
+			int max, // valeur à ne pas dépasser
+			Collection lesJoueurs, // les autres joueurs (pour éviter les collisions)
+			Collection lesMurs) { // les murs (pour éviter les collisions)
+		int ancpos = position ;
+		position += lepas ;
+		position = Math.max(position, 0) ;
+		position = Math.min(position,  max) ;
+		if (action==KeyEvent.VK_LEFT || action==KeyEvent.VK_RIGHT) {
+			posX = position ;
+		}else{
+			posY = position ;
 		}
+		// controle s'il y a collision, dans ce cas, le personnage reste sur place
+		if (toucheCollectionObjets(lesJoueurs)!=null || toucheCollectionObjets(lesMurs)!=null) {
+			position = ancpos ;
+		}
+		// passe à l'étape suivante de l'animation de la marche
+		etape = (etape % NBETAPESMARCHE) + 1 ;
+		return position ;
 	}
-	
+
 	/**
 	 * Gain de points de vie après avoir touché un joueur
 	 */
 	public void gainVie() {
 		this.vie += GAIN;
-		if (this.vie > MAXVIE) {
-			this.vie = MAXVIE;
-		}
+		affiche(MARCHE, etape);
 	}
 	
 	/**
 	 * Perte de points de vie après avoir été touché 
 	 */
 	public void perteVie() {
-		this.vie -= PERTE;
-		if (this.vie < 0) {
-			this.vie = 0;
-		}
+		this.vie = Math.max(0, this.vie - PERTE);
+		affiche(MARCHE, etape);
 	}
 	
 	/**
@@ -226,21 +227,15 @@ public class Joueur extends Objet implements Global {
 	}
 	
 	/**
-	 * Le joueur se déconnecte et disparait
+	 * Le joueur disparait (ainsi que son message et sa boule)
 	 */
 	public void departJoueur() {
-	}
-
-	public int getOrientation() {
-		return orientation;
-	}
-
-	public int getEtape() {
-		return etape;
-	}
-
-	public void setEtape(int etape) {
-		this.etape = etape;
+		if(super.jLabel != null) {
+			super.jLabel.setVisible(false);
+			this.message.setVisible(false);
+			this.boule.getjLabel().setVisible(false);
+			this.jeuServeur.envoiJeuATous();
+		}
 	}
 	
 }

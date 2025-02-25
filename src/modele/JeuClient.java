@@ -16,10 +16,6 @@ public class JeuClient extends Jeu implements Global {
 	 * objet de connexion pour communiquer avec le serveur
 	 */
 	private Connection connection;
-	
-	/**
-	 * Propriété pour controler si les murs ont déjà était crées
-	 */
 	private Boolean mursOk = false;
 	
 	/**
@@ -49,12 +45,13 @@ public class JeuClient extends Jeu implements Global {
 		} else if(info instanceof String) {
 			this.controle.evenementJeuClient(MODIFTCHAT, info);
 		} else if(info instanceof Integer) {
-			this.controle.evenementJeuClient(JOUERSON, info);
+			this.controle.evenementJeuClient(JOUESON, info);
 		}
 	}
 	
 	@Override
-	public void deconnexion() {
+	public void deconnexion(Connection connection) {
+		System.exit(0);
 	}
 
 	/**

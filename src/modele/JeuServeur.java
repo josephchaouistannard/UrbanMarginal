@@ -1,6 +1,7 @@
 package modele;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Hashtable;
 
 import javax.swing.JLabel;
@@ -25,17 +26,6 @@ public class JeuServeur extends Jeu implements Global {
 	private Hashtable<Connection, Joueur> lesJoueurs = new Hashtable<Connection, Joueur>() ;
 	
 	/**
-	 * getter qui retourne une ArrayList avec tous les murs et joueurs
-	 * @return ArrayList avec tous les murs et joueurs
-	 */
-	public ArrayList<Objet> getMursEtJoueurs() {
-		ArrayList<Objet> combinedCollection = new ArrayList<Objet>();
-		combinedCollection.addAll(lesJoueurs.values());
-		combinedCollection.addAll(lesMurs);
-		return combinedCollection;
-	}
-	
-	/**
 	 * Constructeur
 	 * @param controle instance du contrôleur pour les échanges
 	 */
@@ -43,6 +33,13 @@ public class JeuServeur extends Jeu implements Global {
 		super.controle = controle;
 	}
 	
+	/**
+	 * @return the lesJoueurs
+	 */
+	public Collection getLesJoueurs() {
+		return lesJoueurs.values();
+	}
+
 	@Override
 	public void connexion(Connection connection) {
 		this.lesJoueurs.put(connection, new Joueur(this));
@@ -67,19 +64,19 @@ public class JeuServeur extends Jeu implements Global {
 			phrase = this.lesJoueurs.get(connection).getPseudo()+" > "+phrase;
 			this.controle.evenementJeuServeur(AJOUTPHRASE, phrase);
 			break;
-		case ACTION:
-			this.lesJoueurs.get(connection).action(Integer.parseInt(infos[1]), lesJoueurs.values(), lesMurs);
+		case ACTION :
+			Integer action = Integer.parseInt(infos[1]);
+			this.lesJoueurs.get(connection).action(action, this.lesJoueurs.values(), this.lesMurs);
+			break;
 		}
 	}
 	
 	@Override
-	public void deconnexion() {
+	public void deconnexion(Connection connection) {
+		this.lesJoueurs.get(connection).departJoueur();
+		this.lesJoueurs.remove(connection);
 	}
-	
-/**
- * Methode pour envoyer un jlabel au panel de jeu
- * @param jLabel
- */
+
 	public void ajoutJLabelJeuArene(JLabel jLabel) {
 		this.controle.evenementJeuServeur(AJOUTJLABELJEU, jLabel);
 	}

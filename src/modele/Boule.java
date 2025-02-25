@@ -1,7 +1,6 @@
 package modele;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.swing.ImageIcon;
@@ -16,105 +15,123 @@ import controleur.Global;
 public class Boule extends Objet implements Global, Runnable {
 
 	/**
+	 * Collection de murs
+	 */
+	private Collection lesMurs;
+	
+	/**
 	 * instance de JeuServeur pour la communication
 	 */
 	private JeuServeur jeuServeur ;
+	/**
+	 * joueur qui lance la boule
+	 */
+	private Joueur attaquant ;
 	
 	/**
-	 * collection des murs
+	 * Constructeur crée le label de la boule
+	 * @param jeuServeur pour communiquer avec JeuServeur
 	 */
-	private Collection<Mur> lesMurs;
-	
-	/**
-	 * L'attaquant qui tire la boule
-	 */
-	private Joueur attaquant;
-	
-	/**
-	 * Constructeur
-	 */
-	public Boule(JeuServeur server) {
-		this.jeuServeur = server;
+	public Boule(JeuServeur jeuServeur) {
+		this.jeuServeur = jeuServeur;
 		super.jLabel = new JLabel();
 		super.jLabel.setVisible(false);
 		URL resource = getClass().getClassLoader().getResource(BOULE);
 		super.jLabel.setIcon(new ImageIcon(resource));
 		super.jLabel.setBounds(0, 0, LARGEURBOULE, HAUTEURBOULE);
-		
 	}
 	
 	/**
 	 * Tire d'une boule
-	 * @param lesMurs 
-	 * @param joueur 
+	 * @param lesMurs collection de murs
+	 * @param attaquant joueur qui lance la boule
 	 */
-	public void tireBoule(Joueur joueur, ArrayList<Mur> lesMurs) {
-		this.attaquant = joueur;
+	public void tireBoule(Joueur attaquant, Collection lesMurs) {
 		this.lesMurs = lesMurs;
-		this.posY = Math.round(this.attaquant.posY + ((HAUTEURPERSO - HAUTEURBOULE) / 2));
-		if (this.attaquant.getOrientation() == GAUCHE) {
-			this.posX = attaquant.posX - LARGEURBOULE - 1;
-		} else {
-			this.posX = attaquant.posX + LARGEURPERSO + LARGEURBOULE + 1;
+		this.attaquant = attaquant;
+		// positionnement de la boule
+		if(attaquant.getOrientation()==GAUCHE) {
+			posX = attaquant.getPosX() - LARGEURBOULE - 1 ;
+		}else{
+			posX = attaquant.getPosX() + LARGEURPERSO + 1 ;
 		}
+		posY = attaquant.getPosY() + HAUTEURPERSO/2 ;
+		// démarrer le thread pour gérer le tir de la boule
 		new Thread(this).start();
-		
 	}
-	
-	/**
-	 * Thread independent une fois une boule lancé
-	 */
+
+	@Override
 	public void run() {
-		this.attaquant.setEtape(1);
-		super.jLabel.setVisible(true);
+		// envoi du son FIGHT
 		this.jeuServeur.envoi(FIGHT);
-		Joueur cible = null;
+		// afficher l'attaquant à l'étape repos de la marche
+		this.attaquant.affiche(MARCHE, 1);
+		// rendre la boule visible
+		super.jLabel.setVisible(true);
+		// préparer la victime (dans le cas où un joueur est touché)
+		Joueur victime = null;
+		// pas positif ou négatif (suivant l'orientation du joueur) pour faire avancer la boule
 		int lePas;
-		if (this.attaquant.getOrientation() == GAUCHE) {
-			lePas = -PAS;
-		} else {
+		if (attaquant.getOrientation() == GAUCHE) {
+			lePas = - PAS;
+		}else{
 			lePas = PAS;
 		}
+		// gestion de la trajectoire de la boule
 		do {
-			this.posX += lePas;
-			super.jLabel.setBounds(this.posX, this.posY, LARGEURBOULE, HAUTEURBOULE);
+			// la boule avance
+			posX += lePas;
+			jLabel.setBounds(posX, posY, LARGEURBOULE, HAUTEURBOULE);
+			// envoi de la nouvelle zone de jeu à tous (pour que tous voient la boule avancer)
 			this.jeuServeur.envoiJeuATous();
-			ArrayList<Objet> combinedCollection = this.jeuServeur.getMursEtJoueurs();
-			if (this.toucheCollectionObjets(combinedCollection) && this.getObjetTouche(combinedCollection) instanceof Joueur) {
-				cible = (Joueur)this.getObjetTouche(combinedCollection);
-				break;
-			}
-			pause(10, 0);
-		} while (this.posX > 0 && this.posX < LARGEURARENE && !this.toucheCollectionObjets(this.jeuServeur.getMursEtJoueurs()));
-		if (cible != null && !cible.estMort()) {
-			cible.perteVie();
+			// récupère la collection actuelle de joueurs
+			Collection lesJoueurs = this.jeuServeur.getLesJoueurs();
+			// récupération de l'éventuelle victime
+			victime = (Joueur)super.toucheCollectionObjets(lesJoueurs);
+		}while(posX>=0 && posX<=LARGEURARENE && this.toucheCollectionObjets(lesMurs)==null && victime==null);
+		// vérifier s'il y a une victime et qu'elle n'est pas déjà morte
+		if(victime != null && !victime.estMort()) {
+			// envoi du son HURT
+			this.jeuServeur.envoi(HURT);
+			// gestion du gain et de la perte de vie
+			victime.perteVie();
 			attaquant.gainVie();
-			if (!cible.estMort()) {
-				this.jeuServeur.envoi(HURT);
-			}
-			for (int i = 1; i < 3; i++) {
-				cible.affiche(TOUCHE, i);
+			// joue l'animation de la victime blessée
+			for(int k=1 ; k<=NBETAPESTOUCHE ; k++) {
+				victime.affiche(TOUCHE, k);
 				pause(80, 0);
 			}
-			if (cible.estMort()) {
+			// contrôle si la victime est morte
+			if(victime.estMort()) {
+				// envoi du son DEATH
 				this.jeuServeur.envoi(DEATH);
-				for (int i = 1; i < 3; i++) {
-					cible.affiche(MORT, i);
+				// joue l'animation de la mort
+				for(int k=1 ; k<=NBETAPESMORT ; k++) {
+					victime.affiche(MORT, k);
 					pause(80, 0);
 				}
 			} else {
-				cible.affiche(MARCHE, 1);
+				// remettrele joueur dans la position de repos (marche)
+				victime.affiche(MARCHE, 1);
 			}
 		}
-		super.jLabel.setVisible(false);
+		// rendre à nouveau la boule invisible
+		this.jLabel.setVisible(false);
+		// envoyer le nouveau jeu à tous
 		this.jeuServeur.envoiJeuATous();
 	}
-	
-	public void pause(long milli, int nano) {
+
+	/**
+	 * fais une pause (bloque le processus) d'une durée précise
+	 * @param millis millisecondes
+	 * @param nanos nanosecondes
+	 */
+	private void pause(long millis, int nanos) {
 		try {
-			Thread.sleep(milli, nano);
+			Thread.sleep(millis, nanos);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			System.out.println("erreur pause");
 		}
 	}
+	
 }

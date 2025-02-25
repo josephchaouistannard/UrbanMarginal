@@ -25,7 +25,28 @@ public abstract class Objet {
 	protected JLabel jLabel;
 	
 	/**
-	 * Getter pour le jlabel d'un objet de type Objet
+	 * @return the posX
+	 */
+	public Integer getPosX() {
+		return posX;
+	}
+
+	/**
+	 * @return the posY
+	 */
+	public Integer getPosY() {
+		return posY;
+	}
+	
+	public void setPosX(Integer posX) {
+		this.posX = posX;
+	}
+
+	public void setPosY(Integer posY) {
+		this.posY = posY;
+	}
+
+	/**
 	 * @return the jLabel
 	 */
 	public JLabel getjLabel() {
@@ -49,34 +70,19 @@ public abstract class Objet {
 	}
 	
 	/**
-	 * Contrôle si le joueur touche un des objets dans une collection
-	 * @param lesJoueurs collection contenant tous les joueurs
-	 * @return true si l'objet touche une autre
+	 * Vérifie si l'objet actuel touche un des objets de la collection
+	 * @param lesObjets collection d'objets (murs, joueurs ou boules)
+	 * @return l'objet touché ou null
 	 */
-	public Boolean toucheCollectionObjets(Collection<Objet> lesObjets) {
-		for(Objet objet : lesObjets) {
-			if(!this.equals(objet)) {
-				if(this.toucheObjet(objet)) {
-					return true;
+	public Objet toucheCollectionObjets (Collection<Objet> lesObjets) {
+		for (Objet unObjet : lesObjets) {
+			if (!unObjet.equals(this)) {
+				if (toucheObjet(unObjet)) {
+					return unObjet ;
 				}
 			}
 		}
-		return false;
+		return null ;
 	}
 	
-	/**
-	 * Contrôle si le joueur touche un des objets dans une collection
-	 * @param lesJoueurs collection contenant tous les joueurs
-	 * @return true si l'objet touche une autre
-	 */
-	public Objet getObjetTouche(Collection<Objet> lesObjets) {
-		for(Objet objet : lesObjets) {
-			if(!this.equals(objet)) {
-				if(this.toucheObjet(objet)) {
-					return objet;
-				}
-			}
-		}
-		return null;
-	}
 }

@@ -3,8 +3,6 @@
  */
 package controleur;
 
-import java.util.ArrayList;
-
 /**
  * Global contient les constantes du programme
  * @author emds
@@ -52,6 +50,50 @@ public interface Global {
 	 * Chemin de l'image de fond de la vue Arene
 	 */
 	String FONDARENE = CHEMINFONDS+"fondarene.jpg";
+	/**
+	 * Chemin du son welcome (entrée dans la vue ChoixJoueur)
+	 */
+	String SONWELCOME = CHEMINSONS+"welcome.wav";
+	/**
+	 * Chemin du son precedent (clic sur le bouton précédent de la vue ChoixJoueur)
+	 */
+	String SONPRECEDENT = CHEMINSONS+"precedent.wav";
+	/**
+	 * Chemin du son suivant (clic sur le bouton suivant de la vue ChoixJoueur)
+	 */
+	String SONSUIVANT = CHEMINSONS+"suivant.wav";
+	/**
+	 * Chemin du son go (clic sur le bouton GO de la vue ChoixJoueur)
+	 */
+	String SONGO = CHEMINSONS+"go.wav";
+	/**
+	 * Chemin du son flight (tir de la boule)
+	 */
+	String SONFIGHT = CHEMINSONS+"fight.wav";
+	/**
+	 * Chemin du son hurt (joueur blessé)
+	 */
+	String SONHURT = CHEMINSONS+"hurt.wav";
+	/**
+	 * Chemin du son death (joueur tué)
+	 */
+	String SONDEATH = CHEMINSONS+"death.wav";
+	/**
+	 * tableau des sons de la vue Arene
+	 */
+	String[] SON =  {CHEMINSONS + "fight.wav", CHEMINSONS + "hurt.wav", CHEMINSONS + "death.wav"} ;
+	/**
+	 * numéro correspondant au son FIGHT
+	 */
+	int FIGHT = 0;
+	/**
+	 * numéro correspondant au son HURT
+	 */
+	int HURT = 1;
+	/**
+	 * numéro correspondant au son DEATH
+	 */
+	int DEATH = 2;
 	/**
 	 * Extension des fichiers des images des personnages
 	 */
@@ -101,10 +143,6 @@ public interface Global {
 	 */
 	String PSEUDO = "pseudo";
 	/**
-	 * Message "action" envoyé pour l'action d'un joueur
-	 */
-	String ACTION = "action";
-	/**
 	 * vie de départ pour tous les joueurs
 	 */
 	int MAXVIE = 10 ;
@@ -149,6 +187,14 @@ public interface Global {
 	 */
 	int HAUTEURMESSAGE = 8;
 	/**
+	 * largeur de la boule
+	 */
+	int LARGEURBOULE = 17;
+	/**
+	 * hauteur de la boule
+	 */
+	int HAUTEURBOULE = 17;
+	/**
 	 * orientation du personnage vers la gauche
 	 */
 	int GAUCHE = 0;
@@ -157,9 +203,21 @@ public interface Global {
 	 */
 	int DROITE = 1;
 	/**
-	 * pixels de deplacement par pas
+	 * taille du pas quand le personnage avance (nombre de pixels)
 	 */
 	int PAS = 10;
+	/**
+	 * nombre d'étapes (d'images) pour donner l'impresson de marche
+	 */
+	int NBETAPESMARCHE = 4;
+	/**
+	 * nombre d'étapes (d'images) pour donner l'impression d'être touché
+	 */
+	int NBETAPESTOUCHE = 2;
+	/**
+	 * nombre d'étapes (d'images) pour donner l'impresson de mourir
+	 */
+	int NBETAPESMORT = 2;
 	/**
 	 * Message "serveur" pour la création d'un serveur
 	 */
@@ -197,22 +255,12 @@ public interface Global {
 	 */
 	String MODIFTCHAT = "modif tchat";
 	/**
-	 * Hauteur boule
+	 * ordre pour exécuter une action (déplacement, tire de boule)
 	 */
-	int HAUTEURBOULE = 17;
+	String ACTION = "action";
 	/**
-	 * Largeur boule
+	 * ordre pour jouer un son (dans l'arène du client)
 	 */
-	int LARGEURBOULE = 17;
-	
-	String FIGHTSON = "sons/fight.wav";
-	String HURTSON = "sons/hurt.wav";
-	String DEATHSON = "sons/death.wav";
-	String AMBIANCESON = "sons/ambiance.wav";
-	String[] SONS = {FIGHTSON, HURTSON, DEATHSON, AMBIANCESON};
-	int FIGHT = 0;
-	int HURT = 1;
-	int DEATH = 2;
-	int AMBIANCE = 3;
-	String JOUERSON = "jouerson";
+	String JOUESON = "joue son";
+
 }

@@ -6,7 +6,6 @@ import javax.swing.JPanel;
 import modele.Jeu;
 import modele.JeuClient;
 import modele.JeuServeur;
-import modele.Objet;
 import outils.connexion.AsyncResponse;
 import outils.connexion.ClientSocket;
 import outils.connexion.Connection;
@@ -85,13 +84,12 @@ public class Controle implements AsyncResponse, Global {
 	
 	/**
 	 * Information provenant de la vue Arene
-	 * @param info information
+	 * @param info information à transférer
 	 */
 	public void evenementArene(Object info) {
-		if (info instanceof String) {
+		if(info instanceof String) {
 			((JeuClient)this.leJeu).envoi(TCHAT+STRINGSEPARE+info);
-		}
-		if (info instanceof Integer) {
+		}else if (info instanceof Integer) {
 			((JeuClient)this.leJeu).envoi(ACTION+STRINGSEPARE+info);
 		}
 	}
@@ -138,8 +136,9 @@ public class Controle implements AsyncResponse, Global {
 		case MODIFTCHAT :
 			this.frmArene.setTxtChat((String)info);
 			break;
-		case JOUERSON :
-			this.frmArene.joueSon((int)info);
+		case JOUESON :
+			this.frmArene.joueSon((Integer)info);
+			break;
 		}
 	}
 
@@ -171,6 +170,7 @@ public class Controle implements AsyncResponse, Global {
 			this.leJeu.reception(connection, info);
 			break;
 		case DECONNEXION :
+			this.leJeu.deconnexion(connection);
 			break;
 		}
 		
